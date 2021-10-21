@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { AuthenticationService } from "../services/AuthenticationService";
+import { AuthenticationService } from "../services/authenticationService";
 
 const AuthenticationController = {
   async handle(req: Request, res: Response) {
@@ -7,9 +7,9 @@ const AuthenticationController = {
 
     try {
       const result = await AuthenticationService.execute(code);
-      return res.json({ result });
+      return res.json(result);
     } catch (error) {
-      return res.json({ message: error.message });
+      return res.json({ error: error.message });
     }
   },
 };
