@@ -7,8 +7,8 @@ import { Server } from "socket.io";
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 app.use(router);
-app.use(cors);
 
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
