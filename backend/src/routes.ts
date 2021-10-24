@@ -9,7 +9,7 @@ const router = Router();
 router.post("/authenticate", AuthenticationController.handle);
 
 router.post("/messages", ensureAuthenticated, MessageController.create);
-router.get("/messages/last", ensureAuthenticated, MessageController.getLast);
+router.get("/messages/last", MessageController.getLast);
 
 router.get("/profile", ensureAuthenticated, UserController.getUser);
 

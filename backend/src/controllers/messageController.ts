@@ -11,6 +11,7 @@ const MessageController = {
       const result = await MessageService.create(message, user_id);
 
       const infoWS = {
+        id: result.id,
         text: result.text,
         created_at: result.created_at,
         user: {
@@ -27,13 +28,15 @@ const MessageController = {
   },
 
   async getLast(req: Request, res: Response) {
-    const { numberOfMessages } = req.body;
-
+    const { numberOfMessages } = req.query as any;
     try {
-      const result = await MessageService.getLastMessages(numberOfMessages);
+      const result = await MessageService.getLastMessages(
+        Number.parseInt(numberOfMessages)
+      );
       return res.json(result);
     } catch (error) {
-      return res.json({ error: error.message });
+      console.log(error);
+      return res.status(500).json({ error: error.message });
     }
   },
 };
