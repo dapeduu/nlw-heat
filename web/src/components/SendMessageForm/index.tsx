@@ -1,11 +1,25 @@
 import styles from './styles.module.scss'
-import { useContext, useEffect, useState } from 'react'
+import { FormEvent, useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../../contexts/auth'
 import { VscSignOut, VscGithubInverted } from 'react-icons/vsc'
+import { api } from '../../services/api'
 
 export function SendMessageForm() {
   const { user, signOut } = useContext(AuthContext)
   const [message, setMessage] = useState<string>('')
+
+  async function handleSendMessage(e: FormEvent) {
+    e.preventDefault()
+
+    if (!message.trim()) {
+      return
+    }
+
+    await api.post('/messages', { message })
+
+    setMessage('')
+    // TODO: Error handling + Alerts
+  }
 
   return (
     <aside className={styles.container}>
@@ -17,12 +31,13 @@ export function SendMessageForm() {
         <div className={styles.avatar}>
           <img src={user?.avatar_url} alt={user?.name} />
         </div>
-        <h2 className={styles.userName}>
+        <h2 className={styles.userName}>{user?.name}</h2>
+        <span className={styles.userGithub}>
           <VscGithubInverted size="16" />
-          <span className={styles.userGithub}>{user?.login}</span>
-        </h2>
+          {user?.login}
+        </span>
       </header>
-      <form className={styles.sendMessageForm}>
+      <form onSubmit={handleSendMessage} className={styles.sendMessageForm}>
         <label htmlFor="message">Mensagem</label>
         <textarea
           name="message"

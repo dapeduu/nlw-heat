@@ -8,7 +8,9 @@ export function App() {
   const { user } = useContext(AuthContext)
 
   return (
-    <main className={styles.container}>
+    <main
+      className={`${styles.container} ${!!user ? styles.signedBackground : ''}`}
+    >
       <MessageList />
       {!!user ? <SendMessageForm /> : <LoginBox />}
     </main>

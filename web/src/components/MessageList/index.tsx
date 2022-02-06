@@ -2,6 +2,7 @@ import styles from './styles.module.scss'
 import logo from '../../assets/logo.svg'
 import { api } from '../../services/api'
 import { useEffect, useState } from 'react'
+import { io } from 'socket.io-client'
 
 interface Message {
   id: string
@@ -13,6 +14,11 @@ interface Message {
     avatar_url: string
   }
 }
+
+const socket = io('http://localhost:3001')
+let messagesQueue: Message[] = []
+
+socket.on('new_message', (newMessage) => messagesQueue.push(newMessage))
 
 export function MessageList() {
   const [messages, setMessages] = useState<Message[]>([])
@@ -29,7 +35,33 @@ export function MessageList() {
   }
 
   useEffect(() => {
+    const timer = setInterval(() => {
+      if (messagesQueue.length > 0) {
+        setMessages((oldMessages) =>
+          [
+            messagesQueue.shift() as Message,
+            oldMessages[0],
+            oldMessages[1],
+          ].filter(Boolean)
+        )
+      }
+    }, 3000)
+
+    return () => {
+      timer
+    }
+  }, [])
+
+  useEffect(() => {
+    console.log(messages)
+  }, [messages])
+
+  useEffect(() => {
     fetchMessages(3)
+
+    return () => {
+      socket.disconnect()
+    }
   }, [])
 
   return (
